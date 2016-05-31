@@ -561,12 +561,13 @@ function wrapAttachMediaStream(origAttachMediaStream) {
     return function(element, stream) {
         var res = origAttachMediaStream.apply(RTCUtils, arguments);
 
+        var newDevice = RTCUtils.getAudioOutputDevice();
         if (RTCUtils.isDeviceChangeAvailable('output') &&
             stream.getAudioTracks && stream.getAudioTracks().length) {
-            element.setSinkId(RTCUtils.getAudioOutputDevice())
+            element.setSinkId(newDevice)
                 .catch(function (ex) {
                     logger.error('Failed to set audio output on element',
-                        element, ex);
+                        element, ex, stream, newDevice);
                 });
         }
 
